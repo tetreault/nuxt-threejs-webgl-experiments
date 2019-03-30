@@ -1,7 +1,5 @@
 # nuxt-webgl-experiments
 
-> My excellent Nuxt.js project
-
 ## Build Setup
 
 ``` bash

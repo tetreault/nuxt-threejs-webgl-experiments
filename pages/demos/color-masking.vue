@@ -2,7 +2,7 @@
   <section class="section">
     <div class="hero is-fullheight">
       <div class="hero-head">
-        <h1 class="title has-text-centered">WebGL - Simple color animation</h1>
+        <h1 class="title has-text-centered">WebGL - Color masking</h1>
       </div>
       <canvas 
         id="canvas" 
@@ -10,6 +10,22 @@
         Your browser does not seem to support
         HTML5 canvas.
       </canvas>
+      <div class="hero-body">
+        <div class="btn-container">
+          <button 
+            ref="redBtn" 
+            data-color="red" 
+            @click.prevent="setColorMask">Red</button>
+          <button 
+            ref="greenBtn" 
+            data-color="green" 
+            @click.prevent="setColorMask">Green</button>
+          <button 
+            ref="blueBtn" 
+            data-color="blue" 
+            @click.prevent="setColorMask">Blue</button>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -18,7 +34,12 @@
 export default {
   data() {
     return {
-      gl: undefined
+      gl: undefined,
+      colorMask: {
+        red: true,
+        green: true,
+        blue: true
+      }
     };
   },
   mounted() {
@@ -50,6 +71,28 @@ export default {
       this.gl.clearColor(rgbArray[0], rgbArray[1], rgbArray[2], 1.0);
       // Clear the context with the newly set color.
       this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    },
+    setColorMask(e) {
+      switch (e.target.dataset.color) {
+        case "red":
+          this.colorMask.red = !this.colorMask.red;
+          break;
+        case "green":
+          this.colorMask.green = !this.colorMask.green;
+          break;
+        case "blue":
+          this.colorMask.blue = !this.colorMask.blue;
+          break;
+        default:
+          break;
+      }
+
+      this.gl.colorMask(
+        this.colorMask.red,
+        this.colorMask.green,
+        this.colorMask.blue,
+        true
+      );
     }
   }
 };
@@ -68,5 +111,16 @@ h1.title {
   width: 100%;
   background-color: black;
   z-index: -1;
+}
+
+.hero-body {
+  justify-content: center;
+}
+
+button {
+  width: 60px;
+  height: 20px;
+  border-radius: 5px;
+  margin: 5px;
 }
 </style>

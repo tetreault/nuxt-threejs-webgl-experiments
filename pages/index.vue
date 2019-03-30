@@ -9,6 +9,9 @@
           <li>
             <a href="/demos/simple-color-animation">Simple color animation</a>
           </li>
+          <li>
+            <a href="/demos/color-masking">Color masking</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -16,8 +19,17 @@
 </template>
 
 <style scoped>
+.hero-body {
+  align-items: self-start !important;
+}
+
 ul {
-  padding-left: 20px;
+  padding-left: 40px;
+  padding-top: 20px;
+}
+
+li {
+  padding-bottom: 5px;
 }
 
 a {

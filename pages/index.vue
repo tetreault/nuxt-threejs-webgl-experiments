@@ -7,6 +7,9 @@
       <div class="hero-body">
         <ul>
           <li>
+            <a href="/demos/boilerplate">Simple boilerplate</a>
+          </li>
+          <li>
             <a href="/demos/simple-color-animation">Simple color animation</a>
           </li>
           <li>

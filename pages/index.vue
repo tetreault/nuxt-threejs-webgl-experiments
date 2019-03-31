@@ -12,6 +12,9 @@
           <li>
             <a href="/demos/color-masking">Color masking</a>
           </li>
+          <li>
+            <a href="/demos/scissoring">Scissoring</a>
+          </li>
         </ul>
       </div>
     </div>

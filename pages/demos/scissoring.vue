@@ -2,7 +2,7 @@
   <section class="section">
     <div class="hero is-fullheight">
       <div class="hero-head">
-        <h1 class="title has-text-centered">WebGL - Color masking</h1>
+        <h1 class="title has-text-centered">WebGL - Basic scissoring</h1>
       </div>
       <canvas 
         id="canvas" 
@@ -10,22 +10,6 @@
         Your browser does not seem to support
         HTML5 canvas.
       </canvas>
-      <div class="hero-body">
-        <div class="btn-container">
-          <button 
-            ref="redBtn" 
-            data-color="red" 
-            @click.prevent="setColorMask">Red</button>
-          <button 
-            ref="greenBtn" 
-            data-color="green" 
-            @click.prevent="setColorMask">Green</button>
-          <button 
-            ref="blueBtn" 
-            data-color="blue" 
-            @click.prevent="setColorMask">Blue</button>
-        </div>
-      </div>
     </div>
   </section>
 </template>
@@ -34,15 +18,16 @@
 export default {
   data() {
     return {
-      gl: undefined,
-      colorMask: {
-        red: true,
-        green: true,
-        blue: true
-      }
+      gl: undefined
     };
   },
   mounted() {
+    // The following two lines set the size (in CSS pixels) of
+    // the drawing buffer to be identical to the size of the
+    // canvas HTML element, as determined by CSS.
+    this.$refs.canvas.width = this.$refs.canvas.clientWidth;
+    this.$refs.canvas.height = this.$refs.canvas.clientHeight;
+
     this.gl =
       this.$refs.canvas.getContext("webgl") ||
       canvas.getContext("experimental-webgl");
@@ -59,6 +44,12 @@ export default {
   },
   methods: {
     drawRandomColors() {
+      const scissorDimensions = [
+        Math.random() * this.$refs.canvas.width,
+        Math.random() * this.$refs.canvas.width,
+        Math.random() * this.$refs.canvas.height,
+        Math.random() * this.$refs.canvas.height
+      ];
       const rgbArray = [Math.random(), Math.random(), Math.random()];
       this.gl.viewport(
         0,
@@ -66,32 +57,21 @@ export default {
         this.gl.drawingBufferWidth,
         this.gl.drawingBufferHeight
       );
+
+      // Enable scissoring operation and define the position and
+      // size of the scissoring area.
+      this.gl.enable(this.gl.SCISSOR_TEST);
+      this.gl.scissor(
+        scissorDimensions[0],
+        scissorDimensions[1],
+        scissorDimensions[2],
+        scissorDimensions[3]
+      );
+
       // Set the WebGLRenderingContext clear color to the random color.
       this.gl.clearColor(rgbArray[0], rgbArray[1], rgbArray[2], 1.0);
       // Clear the context with the newly set color.
       this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-    },
-    setColorMask(e) {
-      switch (e.target.dataset.color) {
-        case "red":
-          this.colorMask.red = !this.colorMask.red;
-          break;
-        case "green":
-          this.colorMask.green = !this.colorMask.green;
-          break;
-        case "blue":
-          this.colorMask.blue = !this.colorMask.blue;
-          break;
-        default:
-          break;
-      }
-
-      this.gl.colorMask(
-        this.colorMask.red,
-        this.colorMask.green,
-        this.colorMask.blue,
-        true
-      );
     }
   }
 };

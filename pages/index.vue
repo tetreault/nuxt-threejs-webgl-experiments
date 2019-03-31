@@ -18,6 +18,9 @@
           <li>
             <a href="/demos/scissoring">Scissoring</a>
           </li>
+          <li>
+            <a href="/demos/scissoring-animation">Scissoring animation</a>
+          </li>
         </ul>
       </div>
     </div>

@@ -24,7 +24,7 @@ export default {
   mounted() {
     this.gl =
       this.$refs.canvas.getContext("webgl") ||
-      canvas.getContext("experimental-webgl");
+      this.$refs.canvas.getContext("experimental-webgl");
 
     if (!this.gl) {
       alert(

@@ -2,7 +2,7 @@
   <section class="section">
     <div class="hero is-fullheight">
       <div class="hero-head">
-        <h1 class="title has-text-centered">WebGL - Boilerplate</h1>
+        <h1 class="title has-text-centered">WebGL - Scissoring animation</h1>
       </div>
       <canvas 
         id="canvas" 
@@ -37,20 +37,14 @@ export default {
         "Failed to get WebGL context. Your browser or device may not support WebGL."
       );
     } else {
-      this.gl.viewport(
-        0,
-        0,
-        this.gl.drawingBufferWidth,
-        this.gl.drawingBufferHeight
-      );
-
-      // Set the WebGLRenderingContext clear color to the random color.
-      this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-      // Clear the context with the newly set color.
-      this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      setInterval(() => {
+        this.scissorAnimation();
+      }, 15);
     }
   },
-  methods: {}
+  methods: {
+    scissorAnimation() {}
+  }
 };
 </script>
 

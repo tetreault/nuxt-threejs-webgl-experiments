@@ -21,6 +21,9 @@
           <li>
             <a href="/demos/scissoring-animation">Scissoring animation</a>
           </li>
+          <li>
+            <a href="/demos/scissor-square-game">Scissor square game</a>
+          </li>
         </ul>
       </div>
     </div>

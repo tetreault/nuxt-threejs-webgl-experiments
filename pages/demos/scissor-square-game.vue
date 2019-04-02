@@ -1,6 +1,8 @@
 <template>
   <section class="section">
-    <div class="hero is-fullheight">
+    <div 
+      class="hero is-fullheight" 
+      @click="trackClick">
       <div class="hero-head">
         <h1 class="title has-text-centered">WebGL - Scissor Square Game</h1>
       </div>
@@ -42,6 +44,8 @@ export default {
         "Failed to get WebGL context. Your browser or device may not support WebGL."
       );
     } else {
+      this.gl.enable(this.gl.SCISSOR_TEST);
+
       this.gl.viewport(
         0,
         0,
@@ -99,6 +103,32 @@ export default {
       if (this.rectangle.position[1] < 0) {
         //misses += 1;
         //missesDisplay.innerHTML = misses;
+        this.setupRectangle();
+      }
+    },
+    trackClick(e) {
+      // transform the position of the click event from
+      // window coordinates to relative position inside the canvas.
+      // In addition we need to remember that vertical position in
+      // WebGL increases from bottom to top, unlike in the browser
+      // window.
+      const position = [
+        e.pageX - e.target.offsetLeft,
+        this.gl.drawingBufferHeight - (e.pageY - e.target.offsetTop)
+      ];
+
+      // if the click falls inside the rectangle, we caught it.
+      const diffPos = [
+        position[0] - this.rectangle.position[0],
+        position[1] - this.rectangle.position[1]
+      ];
+
+      if (
+        diffPos[0] >= 0 &&
+        diffPos[0] < this.rectangle.size[0] &&
+        diffPos[1] >= 0 &&
+        diffPos[1] < this.rectangle.size[1]
+      ) {
         this.setupRectangle();
       }
     },

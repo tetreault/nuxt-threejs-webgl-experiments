@@ -7,22 +7,32 @@
       <div class="hero-body">
         <ul>
           <li>
-            <a href="/demos/boilerplate">Simple boilerplate</a>
+            <h4>WebGL Fundamentals</h4>
           </li>
           <li>
-            <a href="/demos/simple-color-animation">Simple color animation</a>
+            <br>
+            <h4>Mozilla demos</h4>
           </li>
           <li>
-            <a href="/demos/color-masking">Color masking</a>
+            <a href="/mozilla-demos/boilerplate">Simple boilerplate</a>
           </li>
           <li>
-            <a href="/demos/scissoring">Scissoring</a>
+            <a href="/mozilla-demos/simple-color-animation">Simple color animation</a>
           </li>
           <li>
-            <a href="/demos/scissoring-animation">Scissoring animation</a>
+            <a href="/mozilla-demos/color-masking">Color masking</a>
           </li>
           <li>
-            <a href="/demos/scissor-square-game">Scissor square game</a>
+            <a href="/mozilla-demos/scissoring">Scissoring</a>
+          </li>
+          <li>
+            <a href="/mozilla-demos/scissoring-animation">Scissoring animation</a>
+          </li>
+          <li>
+            <a href="/mozilla-demos/scissor-square-game">Scissor square game</a>
+          </li>
+          <li>
+            <a href="/mozilla-demos/basic-glsl-shader">Basic GLSL shader</a>
           </li>
         </ul>
       </div>

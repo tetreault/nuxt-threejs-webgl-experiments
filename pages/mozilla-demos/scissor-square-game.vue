@@ -116,13 +116,12 @@ export default {
         e.pageX - e.target.offsetLeft,
         this.gl.drawingBufferHeight - (e.pageY - e.target.offsetTop)
       ];
-
-      // if the click falls inside the rectangle, we caught it.
       const diffPos = [
         position[0] - this.rectangle.position[0],
         position[1] - this.rectangle.position[1]
       ];
 
+      // if the click falls inside the rectangle, we caught it.
       if (
         diffPos[0] >= 0 &&
         diffPos[0] < this.rectangle.size[0] &&

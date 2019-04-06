@@ -66,7 +66,7 @@ export default {
       // Clear the context with the newly set color.
       this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
-      // set up shaders
+      // set up shaders and program
       this.setupVertexShader();
       this.setupFragmentShader();
       this.setupProgram();

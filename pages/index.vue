@@ -7,7 +7,7 @@
       <div class="hero-body">
         <ul>
           <li>
-            <h4>WebGL Fundamentals</h4>
+            <h4>Learn Three.js Book demos</h4>
           </li>
           <li>
             <br>

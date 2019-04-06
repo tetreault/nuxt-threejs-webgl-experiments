@@ -2,12 +2,15 @@
   <section class="section">
     <div class="hero is-fullheight">
       <div class="hero-head">
-        <h1 class="title has-text-centered">WebGL experiments using Nuxt</h1>
+        <h1 class="title has-text-centered">ThreeJS/WebGL experiments using Nuxt</h1>
       </div>
       <div class="hero-body">
         <ul>
           <li>
             <h4>Learn Three.js Book demos</h4>
+          </li>
+          <li>
+            <a href="/learn-threejs-book/boilerplate">ThreeJS boilerplate</a>
           </li>
           <li>
             <br>

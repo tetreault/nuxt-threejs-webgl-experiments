@@ -4,7 +4,9 @@
       <div class="hero-head">
         <h1 class="title has-text-centered">WebGL - Boilerplate</h1>
       </div>
-      <canvas id="canvas" ref="canvas">
+      <canvas 
+        id="canvas" 
+        ref="canvas">
         Your browser does not seem to support
         HTML5 canvas.
       </canvas>
@@ -13,18 +15,17 @@
 </template>
 
 <script>
+import * as THREE from "three";
+
 export default {
   data() {
-    return {
-      gl: undefined
-    };
+    return {};
   },
   mounted() {
-    // The following two lines set the size (in CSS pixels) of
-    // the drawing buffer to be identical to the size of the
-    // canvas HTML element, as determined by CSS.
     this.$refs.canvas.width = this.$refs.canvas.clientWidth;
     this.$refs.canvas.height = this.$refs.canvas.clientHeight;
+
+    console.log(THREE.REVISION);
   },
   methods: {}
 };

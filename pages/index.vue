@@ -12,9 +12,10 @@
           <li>
             <a href="/learn-threejs-book/first-scene">First Scene</a>
           </li>
+        </ul>
+        <ul>
           <li>
-            <br>
-            <h4>Mozilla demos</h4>
+            <h4>Mozilla WebGL demos</h4>
           </li>
           <li>
             <a href="/mozilla-demos/boilerplate">Simple boilerplate</a>
@@ -46,6 +47,7 @@
 <style scoped>
 .hero-body {
   align-items: self-start !important;
+  justify-content: center;
 }
 
 ul {

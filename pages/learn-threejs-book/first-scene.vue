@@ -41,6 +41,10 @@ export default {
       this.renderer.setClearColor(new THREE.Color(0x000000));
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.scene.add(axes);
+
+      window.addEventListener("resize", () => {
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+      });
     },
     addGeometry() {
       // create plane geometry and material

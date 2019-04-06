@@ -10,7 +10,7 @@
             <h4>Learn Three.js Book demos</h4>
           </li>
           <li>
-            <a href="/learn-threejs-book/boilerplate">ThreeJS boilerplate</a>
+            <a href="/learn-threejs-book/first-scene">First Scene</a>
           </li>
           <li>
             <br>

@@ -55,6 +55,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: ['three', 'vue-three'],
     postcss: {
       preset: {
         features: {

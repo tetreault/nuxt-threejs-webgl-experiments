@@ -10,7 +10,10 @@
             <h4>Learn Three.js Book demos</h4>
           </li>
           <li>
-            <a href="/learn-threejs-book/first-scene">First Scene</a>
+            <a href="/learn-threejs-book/01-first-scene">01 - First Scene</a>
+          </li>
+          <li>
+            <a href="/learn-threejs-book/01-materials-light">01 - Materials Light</a>
           </li>
         </ul>
         <ul>

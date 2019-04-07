@@ -15,6 +15,11 @@
           <li>
             <a href="/learn-threejs-book/01-materials-light">01 - Materials Light</a>
           </li>
+          <li>
+            <a
+              href="/learn-threejs-book/01-materials-light-animation"
+            >01 - Materials Light Animation</a>
+          </li>
         </ul>
         <ul>
           <li>

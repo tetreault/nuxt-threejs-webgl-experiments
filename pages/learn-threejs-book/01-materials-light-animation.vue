@@ -11,6 +11,11 @@
 
 <script>
 import * as THREE from "three";
+let TrackballControls;
+
+if (process.client) {
+  TrackballControls = require("three-trackballcontrols");
+}
 
 export default {
   data() {
@@ -23,7 +28,9 @@ export default {
       cube: undefined,
       sphere: undefined,
       started: false,
-      step: 0
+      step: 0,
+      trackballControls: undefined,
+      clock: undefined
     };
   },
   mounted() {
@@ -31,6 +38,8 @@ export default {
     this.addGeometry();
     this.addLight();
     this.positionCamera();
+    this.setupClock();
+    this.setupTrackballControls();
     this.$refs.threeElement.appendChild(this.renderer.domElement);
   },
   methods: {
@@ -47,6 +56,8 @@ export default {
       this.renderer.setClearColor(new THREE.Color(0x000000));
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMapSoft = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       window.addEventListener("resize", () => {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -102,6 +113,8 @@ export default {
       spotLight.shadow.camera.far = 130;
       spotLight.shadow.camera.near = 40;
       spotLight.castShadow = true;
+      spotLight.decay = 2;
+      spotLight.penumbra = 0.05;
       this.scene.add(spotLight);
     },
     positionCamera() {
@@ -109,16 +122,37 @@ export default {
       this.camera.position.set(-30, 40, 30);
       this.camera.lookAt(this.scene.position);
     },
+    setupClock() {
+      this.clock = new THREE.Clock();
+    },
+    setupTrackballControls() {
+      this.trackballControls = new TrackballControls(
+        this.camera,
+        this.renderer.domElement
+      );
+      this.trackballControls.rotateSpeed = 1.0;
+      this.trackballControls.zoomSpeed = 1.2;
+      this.trackballControls.panSpeed = 0.8;
+      this.trackballControls.noZoom = false;
+      this.trackballControls.noPan = false;
+      this.trackballControls.staticMoving = true;
+      this.trackballControls.dynamicDampingFactor = 0.3;
+      this.trackballControls.keys = [65, 83, 68];
+    },
     renderScene() {
       this.step += 0.0004;
+
       const rotationArray = [0.02, 0.02, 0.02];
       const positionArray = [
         0.02 * Math.cos(this.step),
         0.02 * Math.abs(Math.sin(this.step))
       ];
-      window.RAF = requestAnimationFrame(this.renderScene);
+
+      this.trackballControls.update(this.clock.getDelta());
       this.updateGeometryRotation(this.cube, rotationArray);
       this.updateGeometryPosition(this.sphere, positionArray);
+
+      window.RAF = requestAnimationFrame(this.renderScene);
       this.renderer.render(this.scene, this.camera);
     },
     startScene() {

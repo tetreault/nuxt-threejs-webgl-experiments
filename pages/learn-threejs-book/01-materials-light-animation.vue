@@ -18,7 +18,12 @@ export default {
       scene: undefined,
       camera: undefined,
       renderer: undefined,
-      stats: undefined
+      stats: undefined,
+      plane: undefined,
+      cube: undefined,
+      sphere: undefined,
+      started: false,
+      step: 0
     };
   },
   mounted() {
@@ -51,10 +56,10 @@ export default {
       // create plane geometry and material
       const planeGeometry = new THREE.PlaneGeometry(60, 20);
       const planeMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa });
-      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-      plane.rotation.x = -0.5 * Math.PI;
-      plane.position.set(15, 0, 0);
-      plane.receiveShadow = true;
+      this.plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      this.plane.rotation.x = -0.5 * Math.PI;
+      this.plane.position.set(15, 0, 0);
+      this.plane.receiveShadow = true;
 
       // create cube geometry and material
       const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
@@ -62,9 +67,9 @@ export default {
         color: 0xff0000,
         wireframe: false
       });
-      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      cube.position.set(-4, 3, 0);
-      cube.castShadow = true;
+      this.cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      this.cube.position.set(-4, 3, 0);
+      this.cube.castShadow = true;
 
       // create sphere geometry and material
       const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
@@ -72,14 +77,23 @@ export default {
         color: 0x7777ff,
         wireframe: false
       });
-      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      sphere.position.set(20, 4, 2);
-      sphere.castShadow = true;
+      this.sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      this.sphere.position.set(20, 4, 2);
+      this.sphere.castShadow = true;
 
       // add geometries to the scene
-      this.scene.add(plane);
-      this.scene.add(cube);
-      this.scene.add(sphere);
+      this.scene.add(this.plane);
+      this.scene.add(this.cube);
+      this.scene.add(this.sphere);
+    },
+    updateGeometryRotation(shape, coords) {
+      shape.rotation.x += coords[0];
+      shape.rotation.y += coords[1];
+      shape.rotation.z += coords[2];
+    },
+    updateGeometryPosition(shape, coords) {
+      shape.position.x += coords[0];
+      shape.position.y += coords[1];
     },
     addLight() {
       const spotLight = new THREE.SpotLight(0xffffff);
@@ -96,11 +110,23 @@ export default {
       this.camera.lookAt(this.scene.position);
     },
     renderScene() {
+      this.step += 0.0004;
+      const rotationArray = [0.02, 0.02, 0.02];
+      const positionArray = [
+        0.02 * Math.cos(this.step),
+        0.02 * Math.abs(Math.sin(this.step))
+      ];
       window.RAF = requestAnimationFrame(this.renderScene);
+      this.updateGeometryRotation(this.cube, rotationArray);
+      this.updateGeometryPosition(this.sphere, positionArray);
       this.renderer.render(this.scene, this.camera);
     },
     startScene() {
+      if (this.started) return;
+
       this.renderScene();
+
+      this.started = !this.started;
     }
   }
 };

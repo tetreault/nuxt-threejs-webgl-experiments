@@ -13,6 +13,7 @@
 import * as THREE from "three";
 let TrackballControls;
 
+// avoid "window/document not defined" error
 if (process.client) {
   TrackballControls = require("three-trackballcontrols");
 }
@@ -59,9 +60,12 @@ export default {
       this.renderer.shadowMapSoft = true;
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-      window.addEventListener("resize", () => {
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-      });
+      window.addEventListener("resize", this.handleWindowResize);
+    },
+    handleWindowResize() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
     },
     addGeometry() {
       // create plane geometry and material
@@ -135,7 +139,7 @@ export default {
       this.trackballControls.panSpeed = 0.8;
       this.trackballControls.noZoom = false;
       this.trackballControls.noPan = false;
-      this.trackballControls.staticMoving = true;
+      this.trackballControls.staticMoving = false;
       this.trackballControls.dynamicDampingFactor = 0.3;
       this.trackballControls.keys = [65, 83, 68];
     },

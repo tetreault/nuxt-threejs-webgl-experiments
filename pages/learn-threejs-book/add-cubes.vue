@@ -171,12 +171,16 @@ export default {
       this.trackballControls.keys = [65, 83, 68];
     },
     renderScene() {
-      // this.step += 0.0004;
-
       const rotationArray = [0.02, 0.02, 0.02];
 
-      // this.updateGeometryRotation(this.cube, rotationArray);
       this.trackballControls.update(this.clock.getDelta());
+
+      this.scene.traverse(obj => {
+        if (obj instanceof THREE.Mesh && obj !== this.plane) {
+          obj.rotation.x += 0.002;
+          obj.rotation.z += 0.002;
+        }
+      });
 
       window.RAF = requestAnimationFrame(this.renderScene);
       this.renderer.render(this.scene, this.camera);

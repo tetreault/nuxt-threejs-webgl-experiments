@@ -10,15 +10,16 @@
             <h4>Learn Three.js Book demos</h4>
           </li>
           <li>
-            <a href="/learn-threejs-book/01-first-scene">01 - First Scene</a>
+            <a href="/learn-threejs-book/first-scene">First Scene</a>
           </li>
           <li>
-            <a href="/learn-threejs-book/01-materials-light">01 - Materials Light</a>
+            <a href="/learn-threejs-book/materials-light">Materials Light</a>
           </li>
           <li>
-            <a
-              href="/learn-threejs-book/01-materials-light-animation"
-            >01 - Materials Light Animation</a>
+            <a href="/learn-threejs-book/materials-light-animation">Materials Light Animation</a>
+          </li>
+          <li>
+            <a href="/learn-threejs-book/add-cubes">Add Cubes</a>
           </li>
         </ul>
         <ul>

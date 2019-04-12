@@ -21,6 +21,9 @@
           <li>
             <a href="/learn-threejs-book/add-cubes">Add Cubes</a>
           </li>
+          <li>
+            <a href="/learn-threejs-book/manual-geometry">Manual Geometry</a>
+          </li>
         </ul>
         <ul>
           <li>

@@ -4,7 +4,7 @@
       <div 
         id="three-element" 
         ref="threeElement" 
-        @click.prevent="addCube"/>
+        @click.prevent="addManualGeometry"/>
       <button @click.prevent="startScene">Start</button>
     </div>
   </section>
@@ -38,8 +38,9 @@ export default {
   },
   mounted() {
     this.setup();
-    this.addPlane();
+    //this.addPlane();
     this.addLight();
+    this.addManualGeometry();
     this.positionCamera();
     this.setupClock();
     this.setupTrackballControls();
@@ -85,48 +86,58 @@ export default {
 
       // add plane to the scene
       this.scene.add(this.plane);
-
-      // create cube geometry and material
-      // const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-      // const cubeMaterial = new THREE.MeshLambertMaterial({
-      //   color: 0xff0000,
-      //   wireframe: false
-      // });
-      // this.cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      // this.cube.position.set(-4, 3, 0);
-      // this.cube.castShadow = true;
-
-      // create sphere geometry and material
-      // const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-      // const sphereMaterial = new THREE.MeshLambertMaterial({
-      //   color: 0x7777ff,
-      //   wireframe: false
-      // });
-      // this.sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      // this.sphere.position.set(20, 4, 2);
-      // this.sphere.castShadow = true;
-
-      // this.scene.add(this.cube);
-      // this.scene.add(this.sphere);
     },
-    addCube() {
-      const cubeSize = Math.ceil(Math.random() * 3);
-      const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-      const cubeMaterial = new THREE.MeshLambertMaterial({
-        color: Math.random() * 0xffffff
+    addManualGeometry() {
+      const vertices = [
+        new THREE.Vector3(1, 3, 1),
+        new THREE.Vector3(1, 3, -1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(1, -1, -1),
+        new THREE.Vector3(-1, 3, -1),
+        new THREE.Vector3(-1, 3, 1),
+        new THREE.Vector3(-1, -1, -1),
+        new THREE.Vector3(-1, -1, 1)
+      ];
+      const faces = [
+        new THREE.Face3(0, 2, 1),
+        new THREE.Face3(2, 3, 1),
+        new THREE.Face3(4, 6, 5),
+        new THREE.Face3(6, 7, 5),
+        new THREE.Face3(4, 5, 1),
+        new THREE.Face3(5, 0, 1),
+        new THREE.Face3(7, 6, 2),
+        new THREE.Face3(6, 3, 2),
+        new THREE.Face3(5, 7, 0),
+        new THREE.Face3(7, 2, 0),
+        new THREE.Face3(1, 3, 4),
+        new THREE.Face3(3, 6, 4)
+      ];
+      const geom = new THREE.Geometry();
+
+      geom.vertices = vertices;
+      geom.faces = faces;
+      // this makes threejs determine a normal vector for each of the faces
+      geom.computeFaceNormals();
+
+      const materials = [
+        new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
+        new THREE.MeshLambertMaterial({
+          opacity: 0.9,
+          color: 0x44ff44,
+          transparent: true
+        })
+      ];
+
+      const mesh = THREE.SceneUtils.createMultiMaterialObject(geom, materials);
+      console.log(mesh);
+      mesh.castShadow = true;
+      mesh.children.forEach(child => {
+        child.castShadow = true;
       });
-      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
-      cube.castShadow = true;
-      cube.name = `cube-${this.scene.children.length}`;
-      cube.position.x =
-        -30 + Math.round(Math.random() * this.planeDimensions[0]);
-      cube.position.y = Math.round(Math.random() * 5);
-      cube.position.z =
-        -20 + Math.round(Math.random() * this.planeDimensions[1]);
+      console.log(mesh);
 
-      this.scene.add(cube);
-      this.objectCount++;
+      this.scene.add(mesh);
     },
     updateGeometryRotation(shape, coords) {
       shape.rotation.x += coords[0];

@@ -11,13 +11,7 @@
 </template>
 
 <script>
-import * as THREE from "three";
-let TrackballControls;
-
-// avoid "window/document not defined" error
-if (process.client) {
-  TrackballControls = require("three-trackballcontrols");
-}
+import * as THREE from "three-full";
 
 export default {
   components: {},
@@ -85,29 +79,6 @@ export default {
 
       // add plane to the scene
       this.scene.add(this.plane);
-
-      // create cube geometry and material
-      // const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-      // const cubeMaterial = new THREE.MeshLambertMaterial({
-      //   color: 0xff0000,
-      //   wireframe: false
-      // });
-      // this.cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      // this.cube.position.set(-4, 3, 0);
-      // this.cube.castShadow = true;
-
-      // create sphere geometry and material
-      // const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-      // const sphereMaterial = new THREE.MeshLambertMaterial({
-      //   color: 0x7777ff,
-      //   wireframe: false
-      // });
-      // this.sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      // this.sphere.position.set(20, 4, 2);
-      // this.sphere.castShadow = true;
-
-      // this.scene.add(this.cube);
-      // this.scene.add(this.sphere);
     },
     addCube() {
       const cubeSize = Math.ceil(Math.random() * 3);
@@ -157,7 +128,7 @@ export default {
       this.clock = new THREE.Clock();
     },
     setupTrackballControls() {
-      this.trackballControls = new TrackballControls(
+      this.trackballControls = new THREE.TrackballControls(
         this.camera,
         this.renderer.domElement
       );

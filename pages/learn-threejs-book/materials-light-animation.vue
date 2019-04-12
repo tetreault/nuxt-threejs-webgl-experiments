@@ -10,13 +10,7 @@
 </template>
 
 <script>
-import * as THREE from "three";
-let TrackballControls;
-
-// avoid "window/document not defined" error
-if (process.client) {
-  TrackballControls = require("three-trackballcontrols");
-}
+import * as THREE from "three-full";
 
 export default {
   components: {},
@@ -131,7 +125,7 @@ export default {
       this.clock = new THREE.Clock();
     },
     setupTrackballControls() {
-      this.trackballControls = new TrackballControls(
+      this.trackballControls = new THREE.TrackballControls(
         this.camera,
         this.renderer.domElement
       );

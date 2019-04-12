@@ -89,8 +89,8 @@ export default {
         new THREE.Vector3(1, -1, 1),
         new THREE.Vector3(1, -1, -1),
         new THREE.Vector3(-1, 3, -1),
-        new THREE.Vector3(-1, 3, 1),
-        new THREE.Vector3(-1, -1, -1),
+        new THREE.Vector3(Math.random(), Math.random(), 1),
+        new THREE.Vector3(-1, Math.random(), -1),
         new THREE.Vector3(-1, -1, 1)
       ];
       const faces = [
@@ -118,7 +118,7 @@ export default {
         new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }),
         new THREE.MeshLambertMaterial({
           opacity: 0.9,
-          color: 0x44ff44,
+          color: Math.random() * 0x44ff44,
           transparent: true
         })
       ];
@@ -183,8 +183,9 @@ export default {
 
       this.scene.traverse(obj => {
         if (obj instanceof THREE.Mesh && obj !== this.plane) {
-          obj.rotation.x += 0.002;
-          obj.rotation.z += 0.002;
+          obj.rotation.x *= Math.random() * 0.002;
+          obj.rotation.y *= Math.random() * 0.002;
+          obj.rotation.z += Math.random() * 0.04;
         }
       });
 

@@ -33,7 +33,7 @@ export default {
   mounted() {
     console.log(THREE);
     this.setup();
-    this.addPlane();
+    //this.addPlane();
     this.addLight();
     this.addManualGeometry();
     this.positionCamera();

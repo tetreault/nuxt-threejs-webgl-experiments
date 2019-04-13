@@ -3,8 +3,7 @@
     <div class="hero is-fullheight">
       <div 
         id="three-element" 
-        ref="threeElement" 
-        @click.prevent="addManualGeometry"/>
+        ref="threeElement"/>
       <button @click.prevent="startScene">Start</button>
     </div>
   </section>
@@ -31,9 +30,8 @@ export default {
     };
   },
   mounted() {
-    console.log(THREE);
     this.setup();
-    //this.addPlane();
+    this.addPlane();
     this.addLight();
     this.addManualGeometry();
     this.positionCamera();
@@ -130,14 +128,7 @@ export default {
         child.castShadow = true;
       });
 
-      console.log(mesh);
-
       this.scene.add(mesh);
-    },
-    updateGeometryRotation(shape, coords) {
-      shape.rotation.x += coords[0];
-      shape.rotation.y += coords[1];
-      shape.rotation.z += coords[2];
     },
     addLight() {
       // add spotlight and ambient light
@@ -180,15 +171,6 @@ export default {
       const rotationArray = [0.02, 0.02, 0.02];
 
       this.trackballControls.update(this.clock.getDelta());
-
-      this.scene.traverse(obj => {
-        if (obj instanceof THREE.Mesh && obj !== this.plane) {
-          obj.rotation.x *= Math.random() * 0.002;
-          obj.rotation.y *= Math.random() * 0.002;
-          obj.translateX(Math.random() * 0.04);
-          obj.rotation.z += Math.random() * 0.04;
-        }
-      });
 
       window.RAF = requestAnimationFrame(this.renderScene);
       this.renderer.render(this.scene, this.camera);

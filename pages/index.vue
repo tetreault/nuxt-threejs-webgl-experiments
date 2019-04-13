@@ -7,7 +7,7 @@
       <div class="hero-body">
         <ul>
           <li>
-            <h4>Learn Three.js Book demos</h4>
+            <h4>Learn Three.js Book demos (using three-fill)</h4>
           </li>
           <li>
             <a href="/learn-threejs-book/first-scene">First Scene</a>
@@ -23,6 +23,9 @@
           </li>
           <li>
             <a href="/learn-threejs-book/manual-geometry">Manual Geometry</a>
+          </li>
+          <li>
+            <a href="/learn-threejs-book/basic-mesh-scene">Basic Mesh Scene</a>
           </li>
         </ul>
         <ul>

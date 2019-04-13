@@ -25,7 +25,7 @@
             <a href="/learn-threejs-book/manual-geometry">Manual Geometry</a>
           </li>
           <li>
-            <a href="/learn-threejs-book/basic-mesh-scene">Basic Mesh Scene</a>
+            <a href="/learn-threejs-book/camera-texture">Camera Texture</a>
           </li>
         </ul>
         <ul>

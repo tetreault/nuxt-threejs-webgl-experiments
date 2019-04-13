@@ -6,13 +6,15 @@
         ref="videoCanvas" 
         height="125" 
         width="200"/>
-      <video 
-        id="video" 
-        ref="video" 
-        autoplay 
-        loop 
-        playsinline 
-        muted/>
+      <video
+        id="video"
+        ref="video"
+        autoplay
+        loop
+        playsinline
+        muted
+        src="/videos/nic-cage-smile.mp4"
+      />
       <div 
         id="three-element" 
         ref="threeElement"/>
@@ -47,6 +49,7 @@ export default {
     this.positionCamera();
     this.setupClock();
     this.setupTrackballControls();
+    console.log(this.trackballControls);
     this.bindWindowEvents();
     this.$refs.threeElement.appendChild(this.renderer.domElement);
   },
@@ -70,11 +73,11 @@ export default {
     },
     addLight() {
       // add spotlight and ambient light
-      const spotLight = new THREE.SpotLight(0xffffff);
+      const spotLight = new THREE.DirectionalLight(0xffffff);
       spotLight.position.set(-40, 60, -10);
       spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
       spotLight.shadow.camera.far = 100;
-      spotLight.shadow.camera.near = 40;
+      spotLight.shadow.camera.near = 10;
       spotLight.castShadow = true;
       spotLight.decay = 2;
       spotLight.penumbra = 0.05;
@@ -94,8 +97,9 @@ export default {
     setupTrackballControls() {
       this.trackballControls = new THREE.TrackballControls(
         this.camera,
-        this.renderer.domElement
+        document
       );
+      this.trackballControls.rotateSpeed = 1.7;
     },
     /* textures, geometries, meshes */
     createVideoTexture() {
@@ -106,14 +110,20 @@ export default {
     },
     createBoxGeometry() {
       // create cube geometry and material
-      const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-      const cubeMaterial = new THREE.MeshLambertMaterial({
-        wireframe: false,
-        map: this.videoTexture
-      });
-      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      cube.position.set(-4, 0, 0);
-      this.scene.add(cube);
+      for (let idx = 0; idx < 2; idx++) {
+        const sphereGeometry = new THREE.SphereGeometry(10, 20, 20);
+        const sphereMaterial = new THREE.MeshLambertMaterial({
+          wireframe: false,
+          map: this.videoTexture
+        });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.set(
+          Math.random() * 1,
+          Math.random() * 2,
+          Math.random() * 3
+        );
+        this.scene.add(sphere);
+      }
     },
     /* start and render functions */
     startCamera() {
@@ -132,7 +142,9 @@ export default {
     startScene() {
       if (this.started) return;
 
-      this.startCamera();
+      //this.startCamera();
+      this.createVideoTexture();
+      this.createBoxGeometry();
       this.renderScene();
 
       this.started = !this.started;

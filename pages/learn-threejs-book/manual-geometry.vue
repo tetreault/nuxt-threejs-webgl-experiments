@@ -39,6 +39,7 @@ export default {
     this.positionCamera();
     this.setupClock();
     this.setupTrackballControls();
+    this.bindWindowEvents();
     this.$refs.threeElement.appendChild(this.renderer.domElement);
   },
   methods: {
@@ -51,20 +52,12 @@ export default {
         0.1,
         1000
       );
-      this.renderer = new THREE.WebGLRenderer();
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setClearColor(new THREE.Color(0x000000));
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMapSoft = true;
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-      window.addEventListener("resize", this.handleWindowResize);
-      window.addEventListener("keypress", this.changeCameraPosition);
-    },
-    handleWindowResize() {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
     },
     addPlane() {
       // create plane geometry and material
@@ -156,37 +149,6 @@ export default {
       this.camera.position.set(-30, 40, 30);
       this.camera.lookAt(this.scene.position);
     },
-    changeCameraPosition(e) {
-      const theta = 0.2; //the speed of rotation
-      const x = this.camera.position.x;
-      const y = this.camera.position.y;
-      const z = this.camera.position.z;
-
-      e.preventDefault();
-
-      switch (e.key) {
-        case "a":
-          this.camera.position.x = x * Math.cos(theta) + z * Math.sin(theta);
-          this.camera.position.z = z * Math.cos(theta) - x * Math.sin(theta);
-          break;
-        case "w":
-          this.camera.position.y = y * Math.cos(theta) - z * Math.sin(theta);
-          this.camera.position.z = z * Math.cos(theta) + y * Math.sin(theta);
-          break;
-        case "s":
-          this.camera.position.y = y * Math.cos(theta) + z * Math.sin(theta);
-          this.camera.position.z = z * Math.cos(theta) - y * Math.sin(theta);
-          break;
-        case "d":
-          this.camera.position.x = x * Math.cos(theta) - z * Math.sin(theta);
-          this.camera.position.z = z * Math.cos(theta) + x * Math.sin(theta);
-          break;
-        default:
-          break;
-      }
-
-      this.camera.lookAt(this.scene.position);
-    },
     setupClock() {
       this.clock = new THREE.Clock();
     },
@@ -201,15 +163,6 @@ export default {
 
       this.trackballControls.update(this.clock.getDelta());
 
-      // this.scene.traverse(obj => {
-      //   if (obj instanceof THREE.Mesh && obj !== this.plane) {
-      //     obj.rotation.x *= Math.random() * 0.002;
-      //     obj.rotation.y *= Math.random() * 0.002;
-      //     obj.translateX(Math.random() * 0.04);
-      //     obj.rotation.z += Math.random() * 0.04;
-      //   }
-      // });
-
       window.RAF = requestAnimationFrame(this.renderScene);
       this.renderer.render(this.scene, this.camera);
     },
@@ -219,6 +172,48 @@ export default {
       this.renderScene();
 
       this.started = !this.started;
+    },
+    bindWindowEvents() {
+      // window resize
+      window.addEventListener("resize", this.handleWindowResize);
+      // rotate keys
+      window.addEventListener("keypress", this.changeCameraPosition);
+    },
+    handleWindowResize() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    },
+    changeCameraPosition(e) {
+      const theta = 0.2; //the speed of rotation
+      const x = this.camera.position.x;
+      const y = this.camera.position.y;
+      const z = this.camera.position.z;
+
+      e.preventDefault();
+
+      switch (e.key) {
+        case "a": // left
+          this.camera.position.x = x * Math.cos(theta) + z * Math.sin(theta);
+          this.camera.position.z = z * Math.cos(theta) - x * Math.sin(theta);
+          break;
+        case "w": // up
+          this.camera.position.y = y * Math.cos(theta) - z * Math.sin(theta);
+          this.camera.position.z = z * Math.cos(theta) + y * Math.sin(theta);
+          break;
+        case "s": // down
+          this.camera.position.y = y * Math.cos(theta) + z * Math.sin(theta);
+          this.camera.position.z = z * Math.cos(theta) - y * Math.sin(theta);
+          break;
+        case "d": // right
+          this.camera.position.x = x * Math.cos(theta) - z * Math.sin(theta);
+          this.camera.position.z = z * Math.cos(theta) + x * Math.sin(theta);
+          break;
+        default:
+          break;
+      }
+
+      this.camera.lookAt(this.scene.position);
     }
   }
 };

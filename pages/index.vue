@@ -2,7 +2,7 @@
   <section class="section">
     <div class="hero is-fullheight">
       <div class="hero-head">
-        <h1 class="title has-text-centered">ThreeJS/WebGL experiments using Nuxt</h1>
+        <h1 class="title has-text-centered">ThreeJS/WebGL with Nuxt</h1>
       </div>
       <div class="hero-body">
         <ul>
@@ -11,6 +11,9 @@
           </li>
           <li>
             <a href="/experiments/camera-texture">Camera Texture</a>
+          </li>
+          <li>
+            <a href="/experiments/patchwork">Patchwork (lines)</a>
           </li>
         </ul>
         <ul>

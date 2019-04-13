@@ -15,6 +15,9 @@
           <li>
             <a href="/experiments/patchwork">Patchwork (lines)</a>
           </li>
+          <li>
+            <a href="/experiments/video-on-text">Video on text</a>
+          </li>
         </ul>
         <ul>
           <li>

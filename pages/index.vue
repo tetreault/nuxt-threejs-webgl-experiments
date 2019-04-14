@@ -21,6 +21,9 @@
           <li>
             <a href="/experiments/ascii-video-texture">ASCII video texture</a>
           </li>
+          <li>
+            <a href="/experiments/particle-system">Particle System</a>
+          </li>
         </ul>
         <ul>
           <li>

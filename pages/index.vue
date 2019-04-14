@@ -18,6 +18,9 @@
           <li>
             <a href="/experiments/video-on-text">Video on text</a>
           </li>
+          <li>
+            <a href="/experiments/ascii-video-texture">ASCII video texture</a>
+          </li>
         </ul>
         <ul>
           <li>

@@ -22,7 +22,7 @@
             <a href="/experiments/ascii-video-texture">ASCII video texture</a>
           </li>
           <li>
-            <a href="/experiments/particle-system">Particle System</a>
+            <a href="/experiments/photo-particles">Photo Particles</a>
           </li>
         </ul>
         <ul>

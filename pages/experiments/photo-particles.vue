@@ -19,6 +19,9 @@ export default {
       scene: undefined,
       camera: undefined,
       renderer: undefined,
+      particleCount: 500,
+      particles: undefined,
+      particleSystem: undefined,
       started: false,
       trackballControls: undefined,
       clock: undefined
@@ -42,7 +45,7 @@ export default {
         45,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        100
       );
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setClearColor(new THREE.Color(0x000000));
@@ -79,34 +82,69 @@ export default {
       this.trackballControls.rotateSpeed = 1.7;
     },
     /* textures, geometries, meshes */
-    createBoxGeometry() {
-      // create cube geometry and material
-      for (let idx = 0; idx < 2; idx++) {
-        const sphereGeometry = new THREE.SphereGeometry(10, 20, 20);
-        const sphereMaterial = new THREE.MeshLambertMaterial({
-          wireframe: false,
-          map: this.videoTexture
-        });
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        sphere.position.set(
-          Math.random() * 1,
-          Math.random() * 2,
-          Math.random() * 3
-        );
-        this.scene.add(sphere);
+    createParticles() {
+      this.particles = new THREE.Geometry();
+
+      for (let idx = 0; idx < this.particleCount; idx++) {
+        const x = Math.random() * 10;
+        const y = Math.random() * 10;
+        const z = Math.random() * 4;
+        const particle = new THREE.Vector3(x, y, z);
+
+        particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
+
+        this.particles.vertices.push(particle);
       }
+
+      this.createParticleSystem();
+    },
+    createParticleSystem() {
+      const path = "/images/jon-snow.png";
+      const loader = new THREE.TextureLoader();
+
+      // need to load the PNG as a texture we can map to PointsMaterial
+      loader.load(path, texture => {
+        // manipulate texture values because my PNG is loading upside down
+        texture.center = new THREE.Vector2(0.5, 0.5);
+        texture.rotation = -2;
+        texture.wrapS = THREE.RepeatWrapping;
+
+        const particleMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 3,
+          map: texture,
+          blending: THREE.AdditiveBlending,
+          transparent: true
+        });
+
+        // create the particle system (the contstructor has been renamed from ParticleSystem to Points)
+        this.particleSystem = new THREE.Points(
+          this.particles,
+          particleMaterial
+        );
+        this.particleSystem.sortParticles = true;
+
+        // add the particle system to the screen
+        this.scene.add(this.particleSystem);
+      });
+    },
+    rotateParticleSystem(step) {
+      if (typeof this.particleSystem === "undefined") return;
+
+      this.particleSystem.rotation.y += step;
     },
     /* start and render functions */
     startScene() {
       if (this.started) return;
 
-      this.createBoxGeometry();
+      this.createParticles();
       this.renderScene();
 
       this.started = !this.started;
     },
     renderScene() {
       this.trackballControls.update(this.clock.getDelta());
+      this.rotateParticleSystem(0.005);
       this.renderer.render(this.scene, this.camera);
       window.RAF = requestAnimationFrame(this.renderScene);
     },

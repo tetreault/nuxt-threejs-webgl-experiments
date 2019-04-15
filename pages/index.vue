@@ -3,6 +3,14 @@
     <div class="hero is-fullheight">
       <div class="hero-head">
         <h1 class="title has-text-centered">ThreeJS/WebGL with Nuxt</h1>
+        <p class="has-text-centered">
+          The source code can be found
+          <a
+            href="https://github.com/tetreault/nuxt-threejs-webgl-experiments"
+            target="_blank"
+            title="Github Repo"
+          >here</a>
+        </p>
       </div>
       <div class="hero-body">
         <ul>
@@ -43,6 +51,9 @@
           </li>
           <li>
             <a href="/learn-threejs-book/manual-geometry">Manual Geometry</a>
+          </li>
+          <li>
+            <a href="/learn-threejs-book/house-tree-scene">Scene with House and Tree</a>
           </li>
         </ul>
         <ul>

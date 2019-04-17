@@ -1,23 +1,9 @@
 <template>
   <section class="section">
     <div class="hero is-fullheight">
-      <canvas 
-        id="video-canvas" 
-        ref="videoCanvas" 
-        height="125" 
-        width="200"/>
-      <video 
-        id="video" 
-        ref="video" 
-        autoplay 
-        loop 
-        playsinline 
-        muted 
-        src/>
       <div 
         id="three-element" 
-        ref="threeElement" 
-        tabindex="0"/>
+        ref="threeElement"/>
       <button @click="startScene">Start</button>
     </div>
   </section>
@@ -38,8 +24,7 @@ export default {
       particleSystem: undefined,
       started: false,
       trackballControls: undefined,
-      clock: undefined,
-      videoTexture: undefined
+      clock: undefined
     };
   },
   mounted() {
@@ -56,17 +41,14 @@ export default {
     setupCameraSceneRenderer() {
       // set up scene, camera, renderer, and axes
       this.scene = new THREE.Scene();
-
-      this.camera = new THREE.PerspectiveCamera(
-        40,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        10000
+      this.camera = new THREE.OrthographicCamera(
+        window.innerWidth / -40,
+        window.innerWidth / 40,
+        window.innerHeight / 40,
+        window.innerHeight / -40,
+        1,
+        100
       );
-
-      const axesHelper = new THREE.AxesHelper(500);
-      this.scene.add(axesHelper);
-
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setClearColor(new THREE.Color(0x000000));
       this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -77,9 +59,13 @@ export default {
     addLight() {
       // add spotlight and ambient light
       const spotLight = new THREE.DirectionalLight(0xffffff);
-      spotLight.position.set(-30, 40, -10);
-      spotLight.shadow.mapSize = new THREE.Vector2(2048, 2048);
+      spotLight.position.set(-40, 60, -10);
+      spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+      spotLight.shadow.camera.far = 100;
+      spotLight.shadow.camera.near = 10;
       spotLight.castShadow = true;
+      spotLight.decay = 2;
+      spotLight.penumbra = 0.05;
       this.scene.add(spotLight);
 
       const ambientLight = new THREE.AmbientLight(0x3c3c3c);
@@ -87,25 +73,21 @@ export default {
     },
     positionCamera() {
       // position the camera for the scene
-      this.camera.position.set(-9, 3.5, -12);
+      this.camera.position.set(10, 0, 0);
       this.camera.lookAt(this.scene.position);
     },
     setupClock() {
       this.clock = new THREE.Clock();
     },
     setupTrackballControls() {
-      this.trackballControls = new THREE.TrackballControls(
-        this.camera,
-        this.$refs.threeElement.$el
-      );
-      this.trackballControls.domElement = this.$refs.threeElement.$el;
+      this.trackballControls = new THREE.TrackballControls(this.camera);
       this.trackballControls.rotateSpeed = 1.7;
     },
     /* textures, geometries, meshes */
-    createPoints() {
+    createParticles() {
       const geometry = new THREE.BufferGeometry();
       const vertices = [];
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 500000; i++) {
         vertices.push(THREE._Math.randFloatSpread(20)); // x
         vertices.push(THREE._Math.randFloatSpread(20)); // y
         vertices.push(THREE._Math.randFloatSpread(20)); // z
@@ -123,54 +105,46 @@ export default {
       );
       this.scene.add(particles);
     },
-    createGroundPlane() {
-      const size = 2000;
-      const divisions = 1000;
-      const gridHelper = new THREE.GridHelper(size, divisions);
-      this.scene.add(gridHelper);
-    },
-    createVideoTexture() {
-      this.videoTexture = new THREE.VideoTexture(this.$refs.video);
-      this.videoTexture.minFilter = THREE.LinearFilter;
-      this.videoTexture.magFilter = THREE.LinearFilter;
-      this.videoTexture.format = THREE.RGBFormat;
+    createParticleSystem() {
+      const path = "/images/jon-snow.png";
+      const loader = new THREE.TextureLoader();
+
+      // need to load the PNG as a texture we can map to PointsMaterial
+      loader.load(path, texture => {
+        // manipulate texture values because my PNG is loading upside down
+        texture.center = new THREE.Vector2(0.5, 0.5);
+        texture.rotation = -2;
+        texture.wrapS = THREE.RepeatWrapping;
+
+        const particleMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 3,
+          map: texture,
+          blending: THREE.AdditiveBlending,
+          transparent: true
+        });
+
+        // create the particle system (the contstructor has been renamed from ParticleSystem to Points)
+        this.particleSystem = new THREE.Points(
+          this.particles,
+          particleMaterial
+        );
+        this.particleSystem.sortParticles = true;
+
+        // add the particle system to the screen
+        this.scene.add(this.particleSystem);
+      });
     },
     /* start and render functions */
     startScene() {
       if (this.started) return;
 
-      this.startCamera();
+      this.createParticles();
       this.renderScene();
 
       this.started = !this.started;
     },
-    startCamera() {
-      const constraints = (window.constraints = {
-        audio: false,
-        video: { facingMode: "user" }
-      });
-
-      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-        const videoTracks = stream.getVideoTracks();
-        this.$refs.video.srcObject = stream;
-        this.createVideoTexture();
-        this.createGroundPlane();
-        this.createPoints();
-      });
-    },
-    renderCameraToCanvas() {
-      const videoCanvasContext = this.$refs.videoCanvas.getContext("2d");
-
-      videoCanvasContext.drawImage(
-        this.$refs.video,
-        0,
-        0,
-        this.$refs.videoCanvas.width,
-        this.$refs.videoCanvas.height
-      );
-    },
     renderScene() {
-      this.renderCameraToCanvas();
       this.trackballControls.update(this.clock.getDelta());
       this.renderer.render(this.scene, this.camera);
       window.RAF = requestAnimationFrame(this.renderScene);
@@ -223,20 +197,6 @@ export default {
 </script>
 
 <style scoped>
-#video-canvas,
-#video {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  height: 125px;
-  width: 200px;
-  background: white;
-}
-
-#video {
-  opacity: 0;
-}
-
 button {
   position: absolute;
   top: 10px;

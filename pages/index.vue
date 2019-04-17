@@ -33,6 +33,9 @@
             <a href="/experiments/photo-particles">Photo Particles</a>
           </li>
           <li>
+            <a href="/experiments/photo-particles-part-2">Photo Particles Part 2</a>
+          </li>
+          <li>
             <a href="/experiments/webcam-particles">Webcam Particles</a>
           </li>
           <li>

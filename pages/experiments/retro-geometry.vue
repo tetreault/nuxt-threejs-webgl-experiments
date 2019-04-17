@@ -3,7 +3,8 @@
     <div class="hero is-fullheight">
       <div 
         id="three-element" 
-        ref="threeElement"/>
+        ref="threeElement" 
+        tabindex="0"/>
       <button @click="startScene">Start</button>
     </div>
   </section>
@@ -41,12 +42,17 @@ export default {
     setupCameraSceneRenderer() {
       // set up scene, camera, renderer, and axes
       this.scene = new THREE.Scene();
+
       this.camera = new THREE.PerspectiveCamera(
-        70,
+        40,
         window.innerWidth / window.innerHeight,
         0.1,
-        100
+        10000
       );
+
+      const axesHelper = new THREE.AxesHelper(500);
+      this.scene.add(axesHelper);
+
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setClearColor(new THREE.Color(0x000000));
       this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -67,112 +73,87 @@ export default {
     },
     positionCamera() {
       // position the camera for the scene
-      this.camera.position.set(-20, 40, 30);
+      this.camera.position.set(-9, 3.5, -12);
       this.camera.lookAt(this.scene.position);
     },
     setupClock() {
       this.clock = new THREE.Clock();
     },
     setupTrackballControls() {
-      this.trackballControls = new THREE.TrackballControls(this.camera);
+      this.trackballControls = new THREE.TrackballControls(
+        this.camera,
+        this.$refs.threeElement.$el
+      );
+      console.log(this.trackballControls);
+      this.trackballControls.domElement = this.$refs.threeElement.$el;
       this.trackballControls.rotateSpeed = 1.7;
     },
     /* textures, geometries, meshes */
-    createBoundingWall() {
-      const wallLeft = new THREE.BoxGeometry(70, 2, 2);
-      const wallRight = new THREE.BoxGeometry(70, 2, 2);
-      const wallTop = new THREE.BoxGeometry(2, 2, 50);
-      const wallBottom = new THREE.BoxGeometry(2, 2, 50);
+    createPoints() {
+      const geometry = new THREE.BufferGeometry();
+      const vertices = [];
+      for (var i = 0; i < 10000; i++) {
+        vertices.push(THREE._Math.randFloatSpread(20)); // x
+        vertices.push(THREE._Math.randFloatSpread(20)); // y
+        vertices.push(THREE._Math.randFloatSpread(20)); // z
+      }
 
-      const wallMaterial = new THREE.MeshPhongMaterial({
-        color: 0xa0522d
-      });
-
-      const wallLeftMesh = new THREE.Mesh(wallLeft, wallMaterial);
-      const wallRightMesh = new THREE.Mesh(wallRight, wallMaterial);
-      const wallTopMesh = new THREE.Mesh(wallTop, wallMaterial);
-      const wallBottomMesh = new THREE.Mesh(wallBottom, wallMaterial);
-
-      wallLeftMesh.position.set(15, 1, -25);
-      wallRightMesh.position.set(15, 1, 25);
-      wallTopMesh.position.set(-19, 1, 0);
-      wallBottomMesh.position.set(49, 1, 0);
-
-      this.scene.add(wallLeftMesh);
-      this.scene.add(wallRightMesh);
-      this.scene.add(wallTopMesh);
-      this.scene.add(wallBottomMesh);
+      geometry.addAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(vertices, 3)
+      );
+      const particles = new THREE.Points(
+        geometry,
+        new THREE.PointsMaterial({ color: 0x888888 })
+      );
+      this.scene.add(particles);
     },
     createGroundPlane() {
-      const planeGeometry = new THREE.PlaneGeometry(70, 50);
-      const planeMaterial = new THREE.MeshPhongMaterial({
-        color: 0x9acd32
+      let floorGeometry = new THREE.PlaneBufferGeometry(2000, 2000, 100, 100);
+      floorGeometry.rotateX(-Math.PI / 2);
+      console.log(floorGeometry);
+
+      let position = floorGeometry.attributes.position;
+      let vertex = new THREE.Vector3();
+
+      for (let i = 0, l = position.count; i < l; i++) {
+        vertex.fromBufferAttribute(position, i);
+        vertex.x += Math.random() * 10;
+        vertex.y += 1;
+        vertex.z += 10;
+        position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+      }
+
+      floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+      position = floorGeometry.attributes.position;
+
+      const colors = [];
+      let color = new THREE.Color();
+
+      for (let i = 0, l = position.count; i < l; i++) {
+        color.setHSL(Math.random(), Math.random(), Math.random());
+        colors.push(color.r, color.g, color.b);
+      }
+
+      floorGeometry.addAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(colors, 3)
+      );
+
+      const floorMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: THREE.VertexColors,
+        opacity: 0.3
       });
-      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-      plane.receiveShadow = true;
-
-      plane.rotation.x = -0.5 * Math.PI;
-      plane.position.x = 15;
-      plane.position.y = 0;
-      plane.position.z = 0;
-
-      this.scene.add(plane);
-    },
-    createHouse() {
-      const roof = new THREE.ConeGeometry(5, 4);
-      const base = new THREE.CylinderGeometry(5, 5, 6);
-      const roofMaterial = new THREE.MeshPhongMaterial({
-        color: 0x8b7213
-      });
-      const baseMaterial = new THREE.MeshPhongMaterial({
-        color: 0xffe4c4
-      });
-      const roofMesh = new THREE.Mesh(roof, roofMaterial);
-      const baseMesh = new THREE.Mesh(base, baseMaterial);
-
-      roofMesh.position.set(25, 8, 0);
-      baseMesh.position.set(25, 3, 0);
-
-      roofMesh.receiveShadow = true;
-      baseMesh.receiveShadow = true;
-      roofMesh.castShadow = true;
-      baseMesh.castShadow = true;
-
-      this.scene.add(roofMesh);
-      this.scene.add(baseMesh);
-    },
-    createTree() {
-      const trunk = new THREE.BoxGeometry(1, 8, 1);
-      const leaves = new THREE.SphereGeometry(4);
-      const trunkMaterial = new THREE.MeshPhongMaterial({
-        color: 0x8b4513
-      });
-      const leavesMaterial = new THREE.MeshPhongMaterial({
-        color: 0x00ff00
-      });
-      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
-      const leavesMesh = new THREE.Mesh(leaves, leavesMaterial);
-
-      trunkMesh.position.set(-10, 4, 0);
-      leavesMesh.position.set(-10, 12, 0);
-
-      trunkMesh.castShadow = true;
-      trunkMesh.receiveShadow = true;
-      leavesMesh.castShadow = true;
-      leavesMesh.receiveShadow = true;
-
-      this.scene.add(trunkMesh);
-      this.scene.add(leavesMesh);
+      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      this.scene.add(floor);
     },
     /* start and render functions */
     startScene() {
       if (this.started) return;
 
-      this.createBoundingWall();
       this.createGroundPlane();
-      this.createHouse();
-      this.createTree();
+      this.createPoints();
       this.renderScene();
 
       this.started = !this.started;

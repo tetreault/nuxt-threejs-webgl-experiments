@@ -4,6 +4,12 @@
       <div 
         id="three-element" 
         ref="threeElement"/>
+      <canvas 
+        id="photo-canvas" 
+        ref="photoCanvas"/>
+      <img 
+        ref="image" 
+        src="/images/jon-snow-original.jpg">
       <button @click="startScene">Start</button>
     </div>
   </section>
@@ -136,9 +142,21 @@ export default {
       });
     },
     /* start and render functions */
+    renderImgToCanvas() {
+      const canvasContext = this.$refs.photoCanvas.getContext("2d");
+
+      canvasContext.drawImage(
+        this.$refs.image,
+        0,
+        0,
+        this.$refs.photoCanvas.width,
+        this.$refs.photoCanvas.height
+      );
+    },
     startScene() {
       if (this.started) return;
 
+      this.renderImgToCanvas();
       this.createParticles();
       this.renderScene();
 
@@ -197,6 +215,20 @@ export default {
 </script>
 
 <style scoped>
+#photo-canvas,
+img {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: 125px;
+  width: 140px;
+  background: white;
+}
+
+img {
+  opacity: 0;
+}
+
 button {
   position: absolute;
   top: 10px;

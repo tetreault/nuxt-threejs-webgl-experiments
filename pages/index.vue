@@ -41,6 +41,9 @@
           <li>
             <a href="/experiments/retro-geometry">Retro Geometry</a>
           </li>
+          <li>
+            <a href="/experiments/audio-visuals-clearwater">Audio Visuals Clearwater (by JTH)</a>
+          </li>
         </ul>
         <ul>
           <li>

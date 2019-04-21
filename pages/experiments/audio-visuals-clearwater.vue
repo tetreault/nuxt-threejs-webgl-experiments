@@ -4,12 +4,6 @@
       <div 
         id="three-element" 
         ref="threeElement"/>
-      <canvas 
-        id="photo-canvas" 
-        ref="photoCanvas"/>
-      <img 
-        ref="image" 
-        src="/images/jon-snow-original.jpg">
       <button @click="startScene">Start</button>
     </div>
   </section>
@@ -25,31 +19,15 @@ export default {
       scene: undefined,
       camera: undefined,
       renderer: undefined,
-      particleCount: 10000,
+      particleCount: 500,
       particles: undefined,
       particleSystem: undefined,
       started: false,
       trackballControls: undefined,
-      clock: undefined,
-      imageData: undefined,
-      ORBIT_RATE: 0.01,
-      DENSITY: 7,
-      CENTRE_MASS: 5,
-      AGGRESSION: 20,
-      WIDTH: undefined,
-      HEIGHT: undefined,
-      DEPTH: undefined
+      clock: undefined
     };
   },
   mounted() {
-    // set up remaining constants
-    this.WIDTH = window.innerWidth;
-    this.HEIGHT = window.innerHeight;
-    this.DEPTH = Math.max(this.WIDTH, this.HEIGHT);
-
-    console.log(THREE);
-
-    // threejs page load setup
     this.setupCameraSceneRenderer();
     this.addLight();
     this.positionCamera();
@@ -63,17 +41,15 @@ export default {
     setupCameraSceneRenderer() {
       // set up scene, camera, renderer, and axes
       this.scene = new THREE.Scene();
-      this.camera = new THREE.OrthographicCamera(
-        window.innerWidth / -40,
-        window.innerWidth / 40,
-        window.innerHeight / 40,
-        window.innerHeight / -40,
-        1,
+      this.camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
         100
       );
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setClearColor(new THREE.Color(0x000000));
-      this.renderer.setSize(this.WIDTH, this.HEIGHT);
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMapSoft = true;
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -95,7 +71,7 @@ export default {
     },
     positionCamera() {
       // position the camera for the scene
-      this.camera.position.set(10, 0, 0);
+      this.camera.position.set(-30, 40, 30);
       this.camera.lookAt(this.scene.position);
     },
     setupClock() {
@@ -107,79 +83,60 @@ export default {
     },
     /* textures, geometries, meshes */
     createParticles() {
-      const material = new THREE.PointsMaterial({
-        blending: THREE.AdditiveBlending,
-        // map: ImageUtils.loadTexture("images/particle.png"),
-        size: this.DENSITY * 1.5,
-        opacity: 1,
-        vertexColors: true,
-        sizeAttenuation: true
-      });
-      const geometry = new THREE.Geometry();
-      const step = this.DENSITY * 4;
+      this.particles = new THREE.Geometry();
 
-      // go thru the pixels
-      for (let x = 0; x < this.WIDTH; x += step) {
-        for (let y = this.HEIGHT; y >= 0; y -= this.DENSITY) {
-          const pixel = y * this.WIDTH * 4 + x;
+      for (let idx = 0; idx < this.particleCount; idx++) {
+        const x = Math.random() * 10;
+        const y = Math.random() * 10;
+        const z = Math.random() * 4;
+        const particle = new THREE.Vector3(x, y, z);
 
-          // grab actual pixel data, ignoring transparencies
-          if (this.imageData[pixel + 3] > 0) {
-            const pixelColor =
-              (this.imageData.data[pixel] << 16) +
-              (this.imageData.data[pixel + 1] << 8) +
-              this.imageData.data[pixel + 2];
-            const color = new THREE.Color(pixelColor);
-            const vector = new THREE.Vector3(-300 + x / 4, 240 - y, 0);
+        particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
 
-            geometry.vertices.push(vector);
-            geometry.colors.push(color);
-          }
-        }
+        this.particles.vertices.push(particle);
       }
 
-      const particleSystem = new THREE.Points(geometry, material);
-      particleSystem.sortParticles = true;
-
-      this.scene.add(particleSystem);
+      this.createParticleSystem();
     },
-    test(particles) {
-      const canvasContext = this.$refs.photoCanvas.getContext("2d");
-      canvasContext.clearRect(
-        0,
-        0,
-        this.$refs.photoCanvas.width,
-        this.$refs.photoCanvas.height
-      );
+    createParticleSystem() {
+      const path = "/images/jon-snow.png";
+      const loader = new THREE.TextureLoader();
 
-      for (let i = 0; i < particles.length; i++) {
-        const particle = particles[i];
-        canvasContext.fillRect(particle.x, particle.y, 1, 1);
-      }
+      // need to load the PNG as a texture we can map to PointsMaterial
+      loader.load(path, texture => {
+        // manipulate texture values because my PNG is loading upside down
+        texture.center = new THREE.Vector2(0.5, 0.5);
+        texture.rotation = -2;
+        texture.wrapS = THREE.RepeatWrapping;
+
+        const particleMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 3,
+          map: texture,
+          blending: THREE.AdditiveBlending,
+          transparent: true
+        });
+
+        // create the particle system (the contstructor has been renamed from ParticleSystem to Points)
+        this.particleSystem = new THREE.Points(
+          this.particles,
+          particleMaterial
+        );
+        this.particleSystem.sortParticles = true;
+
+        // add the particle system to the screen
+        this.scene.add(this.particleSystem);
+      });
+    },
+    rotateParticleSystem(step) {
+      if (typeof this.particleSystem === "undefined") return;
+
+      this.particleSystem.rotation.y += step;
     },
     /* start and render functions */
-    getCanvasImageData() {
-      const canvasContext = this.$refs.photoCanvas.getContext("2d");
-
-      canvasContext.drawImage(
-        this.$refs.image,
-        0,
-        0,
-        this.$refs.photoCanvas.width,
-        this.$refs.photoCanvas.height
-      );
-
-      this.imageData = canvasContext.getImageData(
-        0,
-        0,
-        this.$refs.photoCanvas.width,
-        this.$refs.photoCanvas.height
-      );
-    },
     startScene() {
       if (this.started) return;
 
-      this.getCanvasImageData();
       this.createParticles();
       this.renderScene();
 
@@ -187,6 +144,7 @@ export default {
     },
     renderScene() {
       this.trackballControls.update(this.clock.getDelta());
+      this.rotateParticleSystem(0.005);
       this.renderer.render(this.scene, this.camera);
       window.RAF = requestAnimationFrame(this.renderScene);
     },
@@ -238,20 +196,6 @@ export default {
 </script>
 
 <style scoped>
-#photo-canvas,
-img {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  height: 125px;
-  width: 140px;
-  background: white;
-}
-
-img {
-  opacity: 0;
-}
-
 button {
   position: absolute;
   top: 10px;

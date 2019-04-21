@@ -81,6 +81,23 @@ export default {
       this.trackballControls = new THREE.TrackballControls(this.camera);
       this.trackballControls.rotateSpeed = 1.7;
     },
+    /* audio */
+    playAudio() {
+      const listener = new THREE.AudioListener();
+      this.camera.add(listener);
+
+      // create a global audio source
+      const sound = new THREE.Audio(listener);
+
+      // load a sound and set it as the Audio object's buffer
+      const audioLoader = new THREE.AudioLoader();
+      audioLoader.load("/audio/clearwater-jth-original.mp3", buffer => {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.play();
+      });
+    },
     /* textures, geometries, meshes */
     createParticles() {
       this.particles = new THREE.Geometry();
@@ -137,6 +154,7 @@ export default {
     startScene() {
       if (this.started) return;
 
+      this.playAudio();
       this.createParticles();
       this.renderScene();
 

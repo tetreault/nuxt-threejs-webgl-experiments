@@ -1,6 +1,10 @@
 <template>
   <section class="section">
     <div class="hero is-fullheight">
+      <audio 
+        loop 
+        preload 
+        src="/audio/clearwater-jth-redlined-bass.mp3"/>
       <div 
         id="three-element" 
         ref="threeElement"/>
@@ -19,12 +23,12 @@ export default {
       scene: undefined,
       camera: undefined,
       renderer: undefined,
-      particleCount: 500,
-      particles: undefined,
-      particleSystem: undefined,
       started: false,
+      audioContext: undefined,
+      analyser: undefined,
       trackballControls: undefined,
-      clock: undefined
+      clock: undefined,
+      sound: undefined
     };
   },
   mounted() {
@@ -82,87 +86,19 @@ export default {
       this.trackballControls.rotateSpeed = 1.7;
     },
     /* audio */
-    playAudio() {
-      const listener = new THREE.AudioListener();
-      this.camera.add(listener);
-
-      // create a global audio source
-      const sound = new THREE.Audio(listener);
-
-      // load a sound and set it as the Audio object's buffer
-      const audioLoader = new THREE.AudioLoader();
-      audioLoader.load("/audio/clearwater-jth-original.mp3", buffer => {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-        sound.play();
-      });
-    },
+    playAudio() {},
     /* textures, geometries, meshes */
-    createParticles() {
-      this.particles = new THREE.Geometry();
-
-      for (let idx = 0; idx < this.particleCount; idx++) {
-        const x = Math.random() * 10;
-        const y = Math.random() * 10;
-        const z = Math.random() * 4;
-        const particle = new THREE.Vector3(x, y, z);
-
-        particle.velocity = new THREE.Vector3(0, -Math.random(), 0);
-
-        this.particles.vertices.push(particle);
-      }
-
-      this.createParticleSystem();
-    },
-    createParticleSystem() {
-      const path = "/images/jon-snow.png";
-      const loader = new THREE.TextureLoader();
-
-      // need to load the PNG as a texture we can map to PointsMaterial
-      loader.load(path, texture => {
-        // manipulate texture values because my PNG is loading upside down
-        texture.center = new THREE.Vector2(0.5, 0.5);
-        texture.rotation = -2;
-        texture.wrapS = THREE.RepeatWrapping;
-
-        const particleMaterial = new THREE.PointsMaterial({
-          color: 0xffffff,
-          size: 3,
-          map: texture,
-          blending: THREE.AdditiveBlending,
-          transparent: true
-        });
-
-        // create the particle system (the contstructor has been renamed from ParticleSystem to Points)
-        this.particleSystem = new THREE.Points(
-          this.particles,
-          particleMaterial
-        );
-        this.particleSystem.sortParticles = true;
-
-        // add the particle system to the screen
-        this.scene.add(this.particleSystem);
-      });
-    },
-    rotateParticleSystem(step) {
-      if (typeof this.particleSystem === "undefined") return;
-
-      this.particleSystem.rotation.y += step;
-    },
     /* start and render functions */
     startScene() {
       if (this.started) return;
 
       this.playAudio();
-      this.createParticles();
       this.renderScene();
 
       this.started = !this.started;
     },
     renderScene() {
       this.trackballControls.update(this.clock.getDelta());
-      this.rotateParticleSystem(0.005);
       this.renderer.render(this.scene, this.camera);
       window.RAF = requestAnimationFrame(this.renderScene);
     },
